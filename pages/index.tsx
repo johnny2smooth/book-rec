@@ -14,19 +14,14 @@ import ResizablePanel from "../components/ResizablePanel";
 const Home: NextPage = () => {
   const [loading, setLoading] = useState(false);
   const [bio, setBio] = useState("");
-  const [vibe, setVibe] = useState<VibeType>("Professional");
+  const [vibe, setVibe] = useState<VibeType>("Fiction");
   const [generatedBios, setGeneratedBios] = useState<String>("");
 
   console.log("Streamed response: ", generatedBios);
 
-  const prompt =
-    vibe === "Funny"
-      ? `Generate 2 funny twitter bios with no hashtags and clearly labeled "1." and "2.". Make sure there is a joke in there and it's a little ridiculous. Make sure each generated bio is at max 20 words and base it on this context: ${bio}${
-          bio.slice(-1) === "." ? "" : "."
-        }`
-      : `Generate 2 ${vibe} twitter bios with no hashtags and clearly labeled "1." and "2.". Make sure each generated bio is at least 14 words and at max 20 words and base them on this context: ${bio}${
-          bio.slice(-1) === "." ? "" : "."
-        }`;
+  const prompt = `Generate 2 recommendations for ${vibe} books which are clearly labeled as "1." and "2.". Make sure each generated recommendation is at least 14 words and at max 20 words and base them on this context: ${bio}${
+    bio.slice(-1) === "." ? "" : "."
+  } Also, make sure to separate the recommendation from the title and author with a colon.`;
 
   const generateBio = async (e: any) => {
     e.preventDefault();
@@ -73,22 +68,10 @@ const Home: NextPage = () => {
         <title>Twitter Generator</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <Header />
       <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-12 sm:mt-20">
-        <a
-          className="flex max-w-fit items-center justify-center space-x-2 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-600 shadow-md transition-colors hover:bg-gray-100 mb-5"
-          href="https://github.com/Nutlope/twitterbio"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Github />
-          <p>Star on GitHub</p>
-        </a>
         <h1 className="sm:text-6xl text-4xl max-w-2xl font-bold text-slate-900">
-          Generate your next Twitter bio in seconds
+          Generate your book recommendation in seconds
         </h1>
-        <p className="text-slate-500 mt-5">18,167 bios generated so far.</p>
         <div className="max-w-xl w-full">
           <div className="flex mt-10 items-center space-x-3">
             <Image
@@ -99,11 +82,7 @@ const Home: NextPage = () => {
               className="mb-5 sm:mb-0"
             />
             <p className="text-left font-medium">
-              Copy your current bio{" "}
-              <span className="text-slate-500">
-                (or write a few sentences about yourself)
-              </span>
-              .
+              Tell us about your favorite book and why you like it.
             </p>
           </div>
           <textarea
@@ -112,12 +91,12 @@ const Home: NextPage = () => {
             rows={4}
             className="w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black my-5"
             placeholder={
-              "e.g. Senior Developer Advocate @vercel. Tweeting about web development, AI, and React / Next.js. Writing nutlope.substack.com."
+              "e.g. I loved The Alchemist by Paulo Coelho because it taught me to follow my dreams."
             }
           />
           <div className="flex mb-5 items-center space-x-3">
             <Image src="/2-black.png" width={30} height={30} alt="1 icon" />
-            <p className="text-left font-medium">Select your vibe.</p>
+            <p className="text-left font-medium">Select your genre.</p>
           </div>
           <div className="block">
             <DropDown vibe={vibe} setVibe={(newVibe) => setVibe(newVibe)} />
@@ -128,7 +107,7 @@ const Home: NextPage = () => {
               className="bg-black rounded-xl text-white font-medium px-4 py-2 sm:mt-10 mt-8 hover:bg-black/80 w-full"
               onClick={(e) => generateBio(e)}
             >
-              Generate your bio &rarr;
+              Generate your book recommendations &rarr;
             </button>
           )}
           {loading && (
@@ -139,6 +118,7 @@ const Home: NextPage = () => {
               <LoadingDots color="white" style="large" />
             </button>
           )}
+          {/* {handle errors too ^^ for situations when the response doesn't come or something like that} */}
         </div>
         <Toaster
           position="top-center"
@@ -153,7 +133,7 @@ const Home: NextPage = () => {
                 <>
                   <div>
                     <h2 className="sm:text-4xl text-3xl font-bold text-slate-900 mx-auto">
-                      Your generated bios
+                      Your book recommendations
                     </h2>
                   </div>
                   <div className="space-y-8 flex flex-col items-center justify-center max-w-xl mx-auto">
@@ -165,10 +145,15 @@ const Home: NextPage = () => {
                           <div
                             className="bg-white rounded-xl shadow-md p-4 hover:bg-gray-100 transition cursor-copy border"
                             onClick={() => {
-                              navigator.clipboard.writeText(generatedBio);
-                              toast("Bio copied to clipboard", {
-                                icon: "✂️",
-                              });
+                              navigator.clipboard.writeText(
+                                generatedBio.split(":")[0].trim()
+                              );
+                              toast(
+                                "Book name and author copied to clipboard",
+                                {
+                                  icon: "✂️",
+                                }
+                              );
                             }}
                             key={generatedBio}
                           >
