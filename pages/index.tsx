@@ -21,7 +21,7 @@ const Home: NextPage = () => {
 
   const prompt = `Generate 2 recommendations for ${vibe} books which are clearly labeled as "1." and "2.". Make sure each generated recommendation is at least 14 words and at max 20 words and base them on this context: ${bio}${
     bio.slice(-1) === "." ? "" : "."
-  } Also, make sure to separate the recommendation from the title and author with a colon.`;
+  } Separate the recommendation from the title and author with a colon.`;
 
   const generateBio = async (e: any) => {
     e.preventDefault();
